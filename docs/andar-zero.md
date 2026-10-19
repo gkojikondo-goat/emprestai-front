@@ -32,7 +32,4 @@ shadcn/ui, Playwright, Sentry e geração do cliente da API com orval.
 
 ## Não decidido ainda
 
-- Se a geração do cliente a partir do openapi.json (orval) entra no andar
-  zero ou fica para depois dele.
-- Nome da variável de ambiente do endereço da API.
 - Organização de pastas do código do front.
