@@ -13,7 +13,7 @@ if (!root) {
 function render() {
   try {
     const env = loadEnv();
-    return <App supabase={createSupabase(env)} />;
+    return <App supabase={createSupabase(env)} apiUrl={env.apiUrl} />;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return (

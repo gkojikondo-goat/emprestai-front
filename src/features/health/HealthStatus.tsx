@@ -32,11 +32,11 @@ export function HealthStatus({ apiUrl }: { apiUrl: string }) {
     return <p role="alert">{state.message}</p>;
   }
   return (
-    <dl>
-      <dt>API</dt>
-      <dd>{state.health.status}</dd>
-      <dt>Banco</dt>
-      <dd>{state.health.database}</dd>
+    <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
+      <dt className="text-text/55">API</dt>
+      <dd className="text-accent-400">{state.health.status}</dd>
+      <dt className="text-text/55">Banco</dt>
+      <dd className="text-accent-400">{state.health.database}</dd>
     </dl>
   );
 }
