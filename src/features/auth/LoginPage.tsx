@@ -78,20 +78,29 @@ function Field({
 export function LoginPage({
   onSubmit,
 }: {
-  onSubmit: (credentials: Credentials) => void | Promise<void>;
+  /** Devolve a mensagem de erro a mostrar, ou undefined se o login deu certo. */
+  onSubmit: (credentials: Credentials) => Promise<string | undefined>;
 }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [formError, setFormError] = useState<string>();
+  const [submitting, setSubmitting] = useState(false);
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
+    if (submitting) return;
     const next: FieldErrors = {};
     if (!email.trim()) next.email = 'Informe o e-mail.';
     if (!password) next.password = 'Informe a senha.';
     setErrors(next);
+    setFormError(undefined);
     if (next.email || next.password) return;
-    void onSubmit({ email: email.trim(), password });
+
+    setSubmitting(true);
+    const message = await onSubmit({ email: email.trim(), password });
+    setSubmitting(false);
+    if (message) setFormError(message);
   }
 
   return (
@@ -124,7 +133,7 @@ export function LoginPage({
 
       <section className="flex items-center justify-center px-14 py-16">
         <form
-          onSubmit={handleSubmit}
+          onSubmit={(event) => void handleSubmit(event)}
           noValidate
           className="flex w-full max-w-[340px] flex-col gap-4"
         >
@@ -150,11 +159,17 @@ export function LoginPage({
             error={errors.password}
             onChange={setPassword}
           />
+          {formError && (
+            <p role="alert" className="text-[13px] text-error">
+              {formError}
+            </p>
+          )}
           <button
             type="submit"
-            className="mt-2 h-10 w-full cursor-pointer rounded-md border border-accent-500 bg-transparent text-sm font-medium text-accent-300 hover:bg-accent-500/12 active:bg-accent-500/22 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500"
+            disabled={submitting}
+            className="mt-2 h-10 w-full cursor-pointer rounded-md border border-accent-500 bg-transparent text-sm font-medium text-accent-300 hover:bg-accent-500/12 active:bg-accent-500/22 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-500 disabled:cursor-not-allowed disabled:opacity-45"
           >
-            Entrar
+            {submitting ? 'Entrando…' : 'Entrar'}
           </button>
           <p className="text-xs text-text/45">
             Cada pessoa vê apenas os próprios empréstimos.

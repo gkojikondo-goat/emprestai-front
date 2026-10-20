@@ -1,3 +1,4 @@
+import { signIn } from './features/auth/auth-api';
 import { HomePage } from './features/auth/HomePage';
 import { LoginPage } from './features/auth/LoginPage';
 import { useSession } from './features/auth/useSession';
@@ -12,6 +13,5 @@ export function App({ supabase }: { supabase: Supabase }) {
   if (session.status === 'signedIn') {
     return <HomePage />;
   }
-  // A chamada ao Supabase entra na T5; por ora o envio válido não faz nada.
-  return <LoginPage onSubmit={() => undefined} />;
+  return <LoginPage onSubmit={(credentials) => signIn(supabase, credentials)} />;
 }
