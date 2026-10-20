@@ -9,5 +9,9 @@ export function App({ supabase }: { supabase: Supabase }) {
   if (session.status === 'loading') {
     return <p className="m-6">Carregando…</p>;
   }
-  return session.status === 'signedIn' ? <HomePage /> : <LoginPage />;
+  if (session.status === 'signedIn') {
+    return <HomePage />;
+  }
+  // A chamada ao Supabase entra na T5; por ora o envio válido não faz nada.
+  return <LoginPage onSubmit={() => undefined} />;
 }
