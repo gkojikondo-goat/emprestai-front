@@ -1,0 +1,52 @@
+@import 'tailwindcss';
+
+/* Tokens do docs/layout.md (seções 1 a 3). */
+@theme {
+  --color-bg: #161826;
+  --color-surface: #232532;
+  --color-text: #e9e9ed;
+  --color-neutral-900: #292b31;
+
+  --color-accent-100: #e6faf7;
+  --color-accent-200: #c2f1eb;
+  --color-accent-300: #93e3da;
+  --color-accent-400: #5fcfc4;
+  --color-accent-500: #2fb8ac;
+  --color-accent-600: #26978e;
+  --color-accent-700: #1d746d;
+  --color-accent-800: #15534e;
+  --color-accent-900: #0f3733;
+
+  --color-error: #e88b8b;
+
+  --font-sans: 'Raleway', system-ui, sans-serif;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    line-height: 1.55;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+    text-wrap: pretty;
+  }
+}
