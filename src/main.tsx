@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { App } from './App';
 import { loadEnv } from './config/env';
 import './index.css';
+import { createSupabase } from './lib/supabase';
 
 const root = document.getElementById('root');
 if (!root) {
@@ -12,7 +13,7 @@ if (!root) {
 function render() {
   try {
     const env = loadEnv();
-    return <App apiUrl={env.apiUrl} />;
+    return <App supabase={createSupabase(env)} />;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return (
