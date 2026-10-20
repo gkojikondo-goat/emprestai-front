@@ -15,9 +15,10 @@ export function HealthStatus({ apiUrl }: { apiUrl: string }) {
       .then((health) => active && setState({ phase: 'ready', health }))
       .catch((error: unknown) => {
         if (!active) return;
-        const message =
-          error instanceof Error ? error.message : 'Erro desconhecido.';
-        setState({ phase: 'error', message });
+        setState({
+          phase: 'error',
+          message: error instanceof Error ? error.message : 'Erro desconhecido.',
+        });
       });
     return () => {
       active = false;
@@ -28,7 +29,7 @@ export function HealthStatus({ apiUrl }: { apiUrl: string }) {
     return <p>Verificando a API…</p>;
   }
   if (state.phase === 'error') {
-    return <p role="alert">Não foi possível consultar a API: {state.message}</p>;
+    return <p role="alert">{state.message}</p>;
   }
   return (
     <dl>
