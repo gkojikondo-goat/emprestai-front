@@ -15,7 +15,11 @@ function render() {
     return <App apiUrl={env.apiUrl} />;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    return <p role="alert">{message}</p>;
+    return (
+      <p role="alert" className="m-6 whitespace-pre-line">
+        {message}
+      </p>
+    );
   }
 }
 
