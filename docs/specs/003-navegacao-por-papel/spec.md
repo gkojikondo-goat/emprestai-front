@@ -1,7 +1,7 @@
 # Spec — Navegação por papel
 
 **Status:** aprovada
-**Implementada:** não
+**Implementada:** sim — verificada PRONTA em 3aa5882 (front)
 
 ## Objetivo
 
