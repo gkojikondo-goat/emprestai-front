@@ -27,6 +27,18 @@
   --radius-lg: 14px;
 }
 
+/* Layout 8: única animação da interface (cards, modal e toast). */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @layer base {
   html,
   body,

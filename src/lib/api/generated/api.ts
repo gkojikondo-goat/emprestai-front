@@ -5,6 +5,56 @@
  * OpenAPI spec version: 1
  */
 import { http } from '../http';
+export type ListaEquipamentosDtoOutputItensItemEmprestimo = {
+  comigo: boolean;
+  /** AAAA-MM-DD */
+  devolverAte: string;
+  pessoaNome: string;
+} | null;
+
+export type ListaEquipamentosDtoOutputItensItemSituacao = typeof ListaEquipamentosDtoOutputItensItemSituacao[keyof typeof ListaEquipamentosDtoOutputItensItemSituacao];
+
+
+export const ListaEquipamentosDtoOutputItensItemSituacao = {
+  disponivel: 'disponivel',
+  emprestado: 'emprestado',
+  manutencao: 'manutencao',
+} as const;
+
+export type ListaEquipamentosDtoOutputItensItem = {
+  categoria: string;
+  emprestimo: ListaEquipamentosDtoOutputItensItemEmprestimo;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /** @nullable */
+  imagemUrl: string | null;
+  nome: string;
+  /** @nullable */
+  observacao: string | null;
+  /** @nullable */
+  patrimonio: string | null;
+  situacao: ListaEquipamentosDtoOutputItensItemSituacao;
+};
+
+export type ListaEquipamentosDtoOutputTotais = {
+  /**
+     * @minimum -9007199254740991
+     * @maximum 9007199254740991
+     */
+  disponiveis: number;
+  /**
+     * @minimum -9007199254740991
+     * @maximum 9007199254740991
+     */
+  total: number;
+};
+
+export interface ListaEquipamentosDtoOutput {
+  itens: ListaEquipamentosDtoOutputItensItem[];
+  proximoCursor: string[];
+  totais: ListaEquipamentosDtoOutputTotais;
+}
+
 export type MeDtoOutputPapel = typeof MeDtoOutputPapel[keyof typeof MeDtoOutputPapel];
 
 
@@ -27,6 +77,71 @@ export interface MeDtoOutput {
   papel: MeDtoOutputPapel;
   tenant: MeDtoOutputTenant;
 }
+
+export type ListarEquipamentosParams = {
+  /** @maxLength 100 */
+  q?: string;
+  situacao?: ListarEquipamentosSituacao;
+  /** @maxLength 200 */
+  cursor?: string;
+  /**
+   * @minimum 1
+   * @maximum 100
+   */
+  limite?: number;
+};
+
+export type ListarEquipamentosSituacao = typeof ListarEquipamentosSituacao[keyof typeof ListarEquipamentosSituacao];
+
+
+export const ListarEquipamentosSituacao = {
+  disponivel: 'disponivel',
+  emprestado: 'emprestado',
+  manutencao: 'manutencao',
+} as const;
+
+export type listarEquipamentosResponse200 = {
+  data: ListaEquipamentosDtoOutput
+  status: 200
+}
+
+export type listarEquipamentosResponseSuccess = (listarEquipamentosResponse200) & {
+  headers: Headers;
+};
+;
+
+export type listarEquipamentosResponse = (listarEquipamentosResponseSuccess)
+
+export const getListarEquipamentosUrl = (params?: ListarEquipamentosParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/v1/equipamentos?${stringifiedParams}` : `/v1/equipamentos`
+}
+
+/**
+ * @summary Catálogo do tenant
+ */
+export const listarEquipamentos = async (params?: ListarEquipamentosParams, options?: Parameters<typeof http>[1]): Promise<listarEquipamentosResponse> => {
+
+  return http<listarEquipamentosResponse>(getListarEquipamentosUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
 
 export type verificarSaudeResponse200 = {
   data: void

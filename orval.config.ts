@@ -6,7 +6,7 @@ import { defineConfig } from 'orval';
  */
 export default defineConfig({
   api: {
-    input: { target: './openapi.json' },
+    input: { target: process.env.ORVAL_ENTRADA ?? './openapi.json' },
     output: {
       target: process.env.ORVAL_SAIDA ?? './src/lib/api/generated/api.ts',
       client: 'fetch',

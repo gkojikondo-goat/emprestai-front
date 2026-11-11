@@ -1,28 +1,40 @@
-// `npm run check:api` (spec 002 CA-15): gera o cliente de novo a partir do
-// openapi.json versionado, numa pasta temporária ao lado da real, e falha se
-// for diferente do cliente commitado em src/lib/api/generated/.
+// `npm run check:api` (spec 002 CA-15). Duas conferências:
+//  1. o openapi.json do front é o mesmo publicado pela API (o versionado no
+//     repositório emprestai-api, quando ele está ao lado deste);
+//  2. o cliente commitado em src/lib/api/generated/ é exatamente o que o orval
+//     gera a partir desse openapi.json.
+// Falha (exit 1) em qualquer divergência. ORVAL_ENTRADA troca o openapi.json
+// de entrada (usado no teste do caminho de falha).
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
 import path from 'node:path';
 
 const raiz = path.resolve(import.meta.dirname, '..');
+const entrada = path.resolve(raiz, process.env.ORVAL_ENTRADA ?? 'openapi.json');
+const daApi = path.resolve(raiz, '..', 'emprestai-api', 'openapi.json');
 const real = path.join(raiz, 'src/lib/api/generated/api.ts');
 const pastaTmp = path.join(raiz, 'src/lib/api/.check-tmp');
 const tmp = path.join(pastaTmp, 'api.ts');
+const norm = (f) => readFileSync(f, 'utf8').replace(/\r\n/g, '\n');
+
+function falhar(msg) {
+  console.error(msg);
+  process.exit(1);
+}
+
+if (!process.env.ORVAL_ENTRADA && existsSync(daApi) && norm(daApi) !== norm(entrada)) {
+  falhar('openapi.json do front difere do publicado pela API. Rode `npm run sync:api` e `npm run gen:api`.');
+}
 
 mkdirSync(pastaTmp, { recursive: true });
 try {
   execFileSync(process.execPath, [path.join(raiz, 'node_modules/orval/dist/bin/orval.mjs')], {
     cwd: raiz,
-    env: { ...process.env, ORVAL_SAIDA: tmp },
+    env: { ...process.env, ORVAL_SAIDA: tmp, ORVAL_ENTRADA: entrada },
     stdio: 'pipe',
   });
-  const norm = (f) => readFileSync(f, 'utf8').replace(/\r\n/g, '\n');
   if (norm(tmp) !== norm(real)) {
-    console.error(
-      'O cliente em src/lib/api/generated/ diverge do openapi.json. Rode `npm run gen:api` e commite.',
-    );
-    process.exit(1);
+    falhar('O cliente em src/lib/api/generated/ diverge do openapi.json. Rode `npm run gen:api` e commite.');
   }
   console.log('check:api ok — cliente igual ao gerado do openapi.json');
 } finally {

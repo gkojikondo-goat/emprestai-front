@@ -61,16 +61,25 @@ describe('003 · navegação por papel', () => {
     const ativa = screen.getByRole('link', { name: 'Meus empréstimos' });
     const inativa = screen.getByRole('link', { name: 'Catálogo' });
     expect(ativa.className).toMatch(/border-accent-500/);
+    expect(ativa.className).toMatch(/(^|\s)border-b-2(\s|$)/);
     expect(ativa.getAttribute('aria-current')).toBe('page');
     expect(inativa.className).toMatch(/text-text\/55/);
     expect(inativa.className).toMatch(/border-transparent/);
   });
 
-  it('[003 CA-07] a barra mostra papel, iniciais, nome e Sair', async () => {
+  it('[003 CA-07] a barra mostra papel, iniciais, nome e Sair (Operações)', async () => {
     abrir('/catalogo', { api: comMe(ME_OPERACOES) });
     expect(await screen.findByText('Otávio Lima')).toBeDefined();
     expect(screen.getByText('Operações', { selector: 'span' })).toBeDefined();
     expect(screen.getByText('OL')).toBeDefined();
+    expect(screen.getByRole('button', { name: 'Sair' })).toBeDefined();
+  });
+
+  it('[003 CA-07] a barra mostra papel, iniciais, nome e Sair (Colaborador)', async () => {
+    abrir('/catalogo', { api: comMe(ME_COLABORADOR) });
+    expect(await screen.findByText('Ana Ribeiro')).toBeDefined();
+    expect(screen.getByText('Colaborador', { selector: 'span' })).toBeDefined();
+    expect(screen.getByText('AR')).toBeDefined();
     expect(screen.getByRole('button', { name: 'Sair' })).toBeDefined();
   });
 
@@ -86,10 +95,24 @@ describe('003 · navegação por papel', () => {
     expect(vercel.rewrites).toEqual([{ source: '/(.*)', destination: '/index.html' }]);
   });
 
-  it('[003 CA-10] telas sem spec mostram o título e "Em construção."', async () => {
-    abrir('/operacoes', { api: comMe(ME_OPERACOES) });
-    expect(await screen.findByRole('heading', { name: 'Operações' })).toBeDefined();
-    expect(screen.getByText('Em construção.')).toBeDefined();
+  it('[003 CA-10] as quatro telas sem spec mostram o título e "Em construção."', async () => {
+    const telas: [string, string][] = [
+      ['/catalogo', 'Catálogo'],
+      ['/meus-emprestimos', 'Meus empréstimos'],
+      ['/operacoes', 'Operações'],
+      ['/equipamentos', 'Equipamentos'],
+    ];
+    for (const [rota, titulo] of telas) {
+      const { unmount } = abrir(rota, { api: comMe(ME_OPERACOES) });
+      expect(await screen.findByRole('heading', { name: titulo })).toBeDefined();
+      expect(screen.getByText('Em construção.')).toBeDefined();
+      unmount();
+    }
+  });
+
+  it('[003 CA-13] com sessão, rota desconhecida leva a /catalogo', async () => {
+    const { router } = abrir('/nao-existe', { api: comMe(ME_COLABORADOR) });
+    await waitFor(() => expect(router.state.location.pathname).toBe('/catalogo'));
   });
 
   it('[003 CA-11] o Toast aparece centralizado a 28px da base e some em 2600ms', () => {
