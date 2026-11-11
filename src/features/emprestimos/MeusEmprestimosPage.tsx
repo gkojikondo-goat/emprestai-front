@@ -41,8 +41,7 @@ export function MeusEmprestimosPage() {
           {itens.map((e) => (
             <li
               key={e.id}
-              className="flex items-center gap-5 rounded-md border border-l-[3px] border-divider bg-surface px-5 py-[18px] text-[13.5px]"
-              style={{ borderLeftColor: e.emAtraso ? '#e88b8b' : '#2fb8ac' }}
+              className="flex items-center gap-5 rounded-md border border-divider bg-surface px-5 py-[18px] text-[13.5px]"
             >
               <div className="flex-[1.4]">
                 <p className="text-[16px]">{e.equipamento.nome}</p>
@@ -54,7 +53,8 @@ export function MeusEmprestimosPage() {
               </div>
               <div className="flex-1">
                 <p className="text-[11px] uppercase tracking-[0.08em] text-text/45">Devolver até</p>
-                <p className={e.emAtraso ? 'text-[#e88b8b]' : 'text-accent-400'}>{formatarData(e.devolverAte)}</p>
+                {/* Cor por estado do prazo é da spec 007 (regra 11 da 006). */}
+                <p>{formatarData(e.devolverAte)}</p>
               </div>
             </li>
           ))}
