@@ -1,7 +1,7 @@
 # Spec — Identidade e tenant
 
 **Status:** aprovada
-**Implementada:** não
+**Implementada:** sim — front verificado PRONTA em 928e03a; API verificada PRONTA em 3e7112c
 
 ## Objetivo
 
