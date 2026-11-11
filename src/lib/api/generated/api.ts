@@ -5,6 +5,19 @@
  * OpenAPI spec version: 1
  */
 import { http } from '../http';
+export interface EmprestimoCriadoDtoOutput {
+  /** AAAA-MM-DD */
+  devolverAte: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  equipamentoId: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /** AAAA-MM-DD */
+  retiradaEm: string;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  userId: string;
+}
+
 export type ListaEquipamentosDtoOutputItensItemEmprestimo = {
   comigo: boolean;
   /** AAAA-MM-DD */
@@ -51,7 +64,7 @@ export type ListaEquipamentosDtoOutputTotais = {
 
 export interface ListaEquipamentosDtoOutput {
   itens: ListaEquipamentosDtoOutputItensItem[];
-  proximoCursor: string[];
+  proximoCursor?: string;
   totais: ListaEquipamentosDtoOutputTotais;
 }
 
@@ -78,6 +91,40 @@ export interface MeDtoOutput {
   tenant: MeDtoOutputTenant;
 }
 
+export type MeusEmprestimosDtoOutputItensItemEquipamento = {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  nome: string;
+  /** @nullable */
+  patrimonio: string | null;
+};
+
+export type MeusEmprestimosDtoOutputItensItem = {
+  /** AAAA-MM-DD */
+  devolverAte: string;
+  emAtraso: boolean;
+  equipamento: MeusEmprestimosDtoOutputItensItemEquipamento;
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  id: string;
+  /** AAAA-MM-DD */
+  retiradaEm: string;
+};
+
+export interface MeusEmprestimosDtoOutput {
+  bloqueado: boolean;
+  itens: MeusEmprestimosDtoOutputItensItem[];
+  /**
+     * @minimum -9007199254740991
+     * @maximum 9007199254740991
+     */
+  limite: number;
+}
+
+export interface SolicitarEmprestimoDto {
+  /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
+  equipamentoId: string;
+}
+
 export type ListarEquipamentosParams = {
   /** @maxLength 100 */
   q?: string;
@@ -99,6 +146,92 @@ export const ListarEquipamentosSituacao = {
   emprestado: 'emprestado',
   manutencao: 'manutencao',
 } as const;
+
+export type solicitarEmprestimoResponse201 = {
+  data: EmprestimoCriadoDtoOutput
+  status: 201
+}
+
+export type solicitarEmprestimoResponseSuccess = (solicitarEmprestimoResponse201) & {
+  headers: Headers;
+};
+;
+
+export type solicitarEmprestimoResponse = (solicitarEmprestimoResponseSuccess)
+
+export const getSolicitarEmprestimoUrl = () => {
+
+
+
+
+  return `/v1/emprestimos`
+}
+
+/**
+ * @summary Pedir um equipamento disponível
+ */
+export const solicitarEmprestimo = async (solicitarEmprestimoDto: SolicitarEmprestimoDto, options?: Parameters<typeof http>[1]): Promise<solicitarEmprestimoResponse> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return http<solicitarEmprestimoResponse>(getSolicitarEmprestimoUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(solicitarEmprestimoDto)
+  }
+);}
+
+
+
+export type meusEmprestimosResponse200 = {
+  data: MeusEmprestimosDtoOutput
+  status: 200
+}
+
+export type meusEmprestimosResponseSuccess = (meusEmprestimosResponse200) & {
+  headers: Headers;
+};
+;
+
+export type meusEmprestimosResponse = (meusEmprestimosResponseSuccess)
+
+export const getMeusEmprestimosUrl = () => {
+
+
+
+
+  return `/v1/emprestimos/meus`
+}
+
+/**
+ * @summary Empréstimos em aberto de quem chama
+ */
+export const meusEmprestimos = async ( options?: Parameters<typeof http>[1]): Promise<meusEmprestimosResponse> => {
+
+  return http<meusEmprestimosResponse>(getMeusEmprestimosUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
 
 export type listarEquipamentosResponse200 = {
   data: ListaEquipamentosDtoOutput

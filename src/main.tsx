@@ -2,8 +2,10 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter } from 'react-router';
 import { App, criarQueryClient } from './App';
-import { criarRotas, TELAS_EM_CONSTRUCAO } from './app/rotas';
+import { criarRotas } from './app/rotas';
 import { loadEnv } from './config/env';
+import { CatalogoPage } from './features/catalogo/CatalogoPage';
+import { MeusEmprestimosPage } from './features/emprestimos/MeusEmprestimosPage';
 import './index.css';
 import { configurarApi } from './lib/api/http';
 import { createSupabase } from './lib/supabase';
@@ -27,7 +29,9 @@ function render() {
         void supabase.auth.signOut();
       },
     });
-    const router = createBrowserRouter(criarRotas(TELAS_EM_CONSTRUCAO));
+    const router = createBrowserRouter(
+      criarRotas({ catalogo: <CatalogoPage />, meusEmprestimos: <MeusEmprestimosPage /> }),
+    );
     return <App supabase={supabase} queryClient={queryClient} router={router} />;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
