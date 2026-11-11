@@ -33,7 +33,7 @@ export function botaoDoCard(item: Equipamento, meus: Meus | undefined): Botao {
     };
   }
   if (meus?.bloqueado) return { texto: 'Bloqueado por atraso', habilitado: false, estilo: 'secundario' };
-  if (meus && meus.itens.length >= meus.limite) {
+  if (meus && meus.itens.length > meus.limite) {
     return { texto: `Limite de ${meus.limite} itens`, habilitado: false, estilo: 'secundario' };
   }
   return { texto: 'Solicitar', habilitado: true, estilo: 'primario' };
