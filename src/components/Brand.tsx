@@ -6,11 +6,14 @@ function BrandMark() {
   );
 }
 
-export function Brand() {
+/** Marca: 17px na tela de login, 15px na barra de navegação (layout 2). */
+export function Brand({ tamanho = 'login' }: { tamanho?: 'login' | 'barra' }) {
   return (
     <div className="flex items-center gap-2.5">
       <BrandMark />
-      <span className="text-[17px] font-bold tracking-[0.02em]">
+      <span
+        className={`${tamanho === 'barra' ? 'text-[15px]' : 'text-[17px]'} font-bold tracking-[0.02em]`}
+      >
         EMPREST<span className="text-accent-500">.AI</span>
       </span>
     </div>

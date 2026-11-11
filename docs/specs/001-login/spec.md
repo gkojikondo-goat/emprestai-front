@@ -48,18 +48,19 @@ logada e sair.
 
 - CA-01 · Sem sessão, ao abrir a aplicação, a tela de Login é exibida.
 - CA-02 · Com e-mail e senha de um usuário cadastrado no Supabase, ao enviar o formulário a
-  pessoa vai para a tela Início, que mostra o e-mail dela.
+  pessoa vai para `/catalogo` (alterado pela spec 003, P11: antes era a tela Início).
 - CA-03 · Com e-mail ou senha incorretos, a tela de Login permanece, mostra "E-mail ou senha
   incorretos." e a pessoa continua sem sessão.
 - CA-04 · Com o e-mail vazio, o formulário não é enviado e mostra "Informe o e-mail."; com a
   senha vazia, mostra "Informe a senha.".
 - CA-05 · Enquanto o envio está em andamento, o botão fica desabilitado com o texto
   "Entrando…", impedindo um segundo envio.
-- CA-06 · Com sessão ativa, recarregar a página mantém a pessoa na tela Início.
-- CA-07 · Na tela Início, o status da API e do banco continua sendo exibido, com os mesmos
-  textos e estados de erro do AZ-03 e AZ-04 do andar zero.
-- CA-08 · Na tela Início, o botão Sair encerra a sessão e volta para a tela de Login; recarregar
-  a página depois disso continua na tela de Login.
+- CA-06 · Com sessão ativa, recarregar a página mantém a pessoa logada e na mesma rota
+  (alterado pela spec 003, P11; ver 003 CA-02 e CA-09).
+- CA-07 · Removido pela spec 003 (P11): o status da API sai da interface; o endpoint
+  `/v1/health` continua existindo.
+- CA-08 · O botão Sair da barra encerra a sessão e volta para a tela de Login; recarregar
+  a página depois disso continua na tela de Login (alterado pela spec 003, P11; ver 003 CA-08).
 - CA-09 · Se o Supabase não puder ser alcançado, a tela de Login mostra "Não foi possível
   entrar agora. Tente novamente." e permanece utilizável.
 - CA-10 · Se `VITE_SUPABASE_URL` ou `VITE_SUPABASE_ANON_KEY` estiverem ausentes, a aplicação

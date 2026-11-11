@@ -1,0 +1,27 @@
+# CI do front (ADR-001: um workflow por repositório). Roda os checks de
+# rules/checks.md. `check:api` falha se o cliente gerado divergir do
+# openapi.json versionado (spec 002 CA-15).
+#
+# Limite conhecido: o openapi.json chega aqui por `npm run sync:api` (cópia
+# do repositório da API, que é privado). O CI não baixa o artefato da API
+# porque isso exigiria um token entre repositórios; a sincronia é passo do
+# desenvolvedor, conferido pelo verificador nos dois repositórios.
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - run: npm run check:api

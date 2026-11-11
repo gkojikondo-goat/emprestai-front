@@ -1,8 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { App } from './App';
+import { createBrowserRouter } from 'react-router';
+import { App, criarQueryClient } from './App';
+import { criarRotas, TELAS_EM_CONSTRUCAO } from './app/rotas';
 import { loadEnv } from './config/env';
 import './index.css';
+import { configurarApi } from './lib/api/http';
 import { createSupabase } from './lib/supabase';
 
 const root = document.getElementById('root');
@@ -13,7 +16,19 @@ if (!root) {
 function render() {
   try {
     const env = loadEnv();
-    return <App supabase={createSupabase(env)} apiUrl={env.apiUrl} />;
+    const supabase = createSupabase(env);
+    const queryClient = criarQueryClient();
+    configurarApi({
+      baseUrl: env.apiUrl,
+      obterToken: async () => (await supabase.auth.getSession()).data.session?.access_token,
+      // Spec 002 CA-14: qualquer 401 encerra a sessão e volta ao Login.
+      aoNaoAutorizado: () => {
+        queryClient.clear();
+        void supabase.auth.signOut();
+      },
+    });
+    const router = createBrowserRouter(criarRotas(TELAS_EM_CONSTRUCAO));
+    return <App supabase={supabase} queryClient={queryClient} router={router} />;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return (

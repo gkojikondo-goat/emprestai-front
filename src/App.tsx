@@ -1,29 +1,32 @@
-import { signIn } from './features/auth/auth-api';
-import { HomePage } from './features/auth/HomePage';
-import { LoginPage } from './features/auth/LoginPage';
-import { useSession } from './features/auth/useSession';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { RouterProvider, type createBrowserRouter } from 'react-router';
+import { ProvedorSessao } from './app/sessao';
 import type { Supabase } from './lib/supabase';
 
+type Router = ReturnType<typeof createBrowserRouter>;
+
+/** Raiz da aplicação: sessão do Supabase, cache do TanStack Query e rotas. */
 export function App({
   supabase,
-  apiUrl,
+  queryClient,
+  router,
 }: {
   supabase: Supabase;
-  apiUrl: string;
+  queryClient: QueryClient;
+  router: Router;
 }) {
-  const session = useSession(supabase);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ProvedorSessao supabase={supabase}>
+        <RouterProvider router={router} />
+      </ProvedorSessao>
+    </QueryClientProvider>
+  );
+}
 
-  if (session.status === 'loading') {
-    return <p className="m-6">Carregando…</p>;
-  }
-  if (session.status === 'signedIn') {
-    return (
-      <HomePage
-        email={session.session.user.email ?? ''}
-        apiUrl={apiUrl}
-        onSignOut={() => void supabase.auth.signOut()}
-      />
-    );
-  }
-  return <LoginPage onSubmit={(credentials) => signIn(supabase, credentials)} />;
+/** ADR-001 / spec 004 regra 14: refaz os dados ao voltar para a aba. */
+export function criarQueryClient(): QueryClient {
+  return new QueryClient({
+    defaultOptions: { queries: { refetchOnWindowFocus: true, retry: false } },
+  });
 }
